@@ -264,7 +264,7 @@ export default function App() {
     if (uc && USE_CASES.some((u) => u.id === uc)) {
       setSelectedUseCaseId(uc);
     }
-    if (!Number.isNaN(b) && b >= 300 && b <= 5000) {
+    if (Number.isFinite(b) && b >= 400 && b <= 3000) {
       setBudgetLimit(b);
     }
   }, []);
@@ -362,7 +362,7 @@ export default function App() {
     ) {
       setSelectedUseCaseId(importedUseCaseId as UseCaseId);
     }
-    if (typeof importedBudget === 'number' && importedBudget >= 300) {
+    if (typeof importedBudget === 'number' && importedBudget >= 400 && importedBudget <= 3000) {
       setBudgetLimit(importedBudget);
     }
     setActiveChallengeId(null);
@@ -423,7 +423,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {/* Top Bar Contract: 3 zones separated by gap-8 */}
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-8 px-6 py-3.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 md:gap-8 px-4 sm:px-6 py-3.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
         {/* Zone 1: Brand Title (single line with undistorted logo) */}
         <a
           href="https://www.unfantasmaenelsistema.com/"
@@ -437,11 +437,11 @@ export default function App() {
             referrerPolicy="no-referrer"
             className="w-9 h-9 object-contain shrink-0"
           />
-          <span>Un Fantasma en el Sistema</span>
+          <span className="hidden sm:inline">Un Fantasma en el Sistema</span>
         </a>
 
         {/* Zone 2: 5 concise single-line navigation links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
           <a
             href="#simulador"
             className="hover:text-slate-900 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
@@ -495,7 +495,7 @@ export default function App() {
           id="simulador"
           className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-5"
         >
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
               <a
                 href="https://www.unfantasmaenelsistema.com/"
@@ -534,7 +534,7 @@ export default function App() {
             </div>
 
             {/* Workspace Actions Toolbar (with Undo/Redo + Presets + Share + Theme) */}
-            <div className="flex flex-wrap items-center gap-2 shrink-0 no-print">
+            <div className="flex flex-wrap items-center gap-2 xl:shrink-0 no-print">
               {/* Quick Undo / Redo Segmented Group */}
               <div className="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-0.5">
                 <button

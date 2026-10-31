@@ -124,13 +124,18 @@ export function evaluateWiringDiagnostics(
     );
   }
 
-  const hasSataDrive =
-    build.storagePrimary?.interface === 'SATA III' ||
-    build.storageSecondary?.interface === 'SATA III';
-  if (hasSataDrive && wiring.sataPowerAndData === 'disconnected') {
-    errors.push(
-      'Cables SATA (Datos L-Shape + Alimentación 15 pines) desconectados: Las unidades de 2.5" / 3.5" instaladas no son detectadas en la UEFI.'
-    );
+  const bootDriveIsSata = build.storagePrimary?.interface === 'SATA III';
+  const dataDriveIsSata = build.storageSecondary?.interface === 'SATA III';
+  if (wiring.sataPowerAndData === 'disconnected') {
+    if (bootDriveIsSata) {
+      errors.push(
+        'Cables SATA (Datos L-Shape + Alimentación 15 pines) desconectados: La unidad de arranque no aparece en la UEFI y el equipo se detiene con «No bootable device».'
+      );
+    } else if (dataDriveIsSata) {
+      warnings.push(
+        'Cables SATA desconectados: El sistema arranca desde el M.2, pero el disco secundario de datos no aparece en la UEFI ni en el sistema operativo.'
+      );
+    }
   }
 
   if (!wiring.frontPanelResetSw) {
@@ -175,8 +180,10 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
     build.storagePrimary?.interface === 'SATA III' ||
     build.storageSecondary?.interface === 'SATA III';
 
-  const jedecDefaultSpeed =
-    build.ram?.ramType === 'DDR5' ? 4800 : build.ram?.ramType === 'DDR4' ? 2133 : 0;
+  // Velocidad que el módulo anuncia en su SPD sin perfil: los kits «gaming» arrancan a la
+  // base JEDEC (DDR4-2133/2400, DDR5-4800); los módulos JEDEC nativos ya van a su velocidad.
+  const jedecDefaultSpeed = build.ram?.jedecSpeedMhz ?? 0;
+  const isJedecNativeKit = Boolean(build.ram && build.ram.jedecSpeedMhz >= build.ram.speedMhz);
   const effectiveRamSpeed = build.ram
     ? bios.memoryProfileXmpExpo
       ? build.ram.speedMhz
@@ -196,7 +203,7 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
           </h2>
         </div>
 
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 self-start sm:self-auto sm:shrink-0">
           <button
             type="button"
             onClick={() => setActiveSubTab('wiring')}
@@ -232,7 +239,7 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
               Practica la conexión de los cables de la fuente y del frontal de la caja, o pulsa{' '}
               <strong>«Desconectar Todo»</strong> para realizar el ejercicio de cableado desde cero.
             </p>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => onChangeWiring(UNWIRED_WORKSHOP_STATE)}
@@ -445,9 +452,9 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
 
                 {/* Visual 2x5 Pin Header Schematic */}
                 <div className="p-3.5 rounded-xl bg-slate-900 text-slate-100 border border-slate-700 space-y-2.5 font-mono">
-                  <div className="text-[10px] text-slate-400 flex justify-between">
+                  <div className="text-[10px] text-slate-400 flex flex-wrap justify-between gap-x-2">
                     <span>FILA SUPERIOR (Pines Pares: 2, 4, 6, 8, 10)</span>
-                    <span>Pin 9 = NC</span>
+                    <span>Pin 10 = llave (sin pin)</span>
                   </div>
 
                   {/* Top Row: Pins 2 & 4 (PWR_LED), Pins 6 & 8 (PWR_SW), Pin 10 (Empty/Key) */}
@@ -580,8 +587,9 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
                     </div>
                   </div>
 
-                  <div className="text-[10px] text-slate-400">
-                    FILA INFERIOR (Pines Impares: 1, 3, 5, 7, 9)
+                  <div className="text-[10px] text-slate-400 flex flex-wrap justify-between gap-x-2">
+                    <span>FILA INFERIOR (Pines Impares: 1, 3, 5, 7, 9)</span>
+                    <span>Pin 9 = NC (reservado)</span>
                   </div>
                 </div>
               </div>
@@ -655,7 +663,9 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
                     1. Perfil de Memoria Extreme (Intel XMP 3.0 / AMD EXPO)
                   </div>
                   <div className="text-[11px] text-slate-400 font-sans mt-0.5">
-                    Si se deja desactivado, la RAM funciona a velocidad base JEDEC ({jedecDefaultSpeed} MT/s) en lugar de su frecuencia nominal ({build.ram?.speedMhz ?? 0} MT/s).
+                    {isJedecNativeKit
+                      ? `Este kit es JEDEC nativo: funciona a ${build.ram?.speedMhz ?? 0} MT/s sin perfil XMP/EXPO.`
+                      : `Si se deja desactivado, la RAM funciona a velocidad base JEDEC (${jedecDefaultSpeed} MT/s) en lugar de su frecuencia nominal (${build.ram?.speedMhz ?? 0} MT/s).`}
                   </div>
                 </div>
                 <button
@@ -801,7 +811,7 @@ export const WiringAndBiosLab: React.FC<WiringAndBiosLabProps> = ({
                 </div>
               </div>
 
-              {!bios.memoryProfileXmpExpo && build.ram && (
+              {!bios.memoryProfileXmpExpo && build.ram && !isJedecNativeKit && (
                 <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-200">
                   <strong>Aviso XMP/EXPO:</strong> Has comprado memoria de {build.ram.speedMhz} MT/s pero al no activar XMP/EXPO en la BIOS está trabajando a {effectiveRamSpeed} MT/s.
                 </div>

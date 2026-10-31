@@ -141,10 +141,26 @@ const SMR_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
 ];
 
+// Orden aleatorio de las opciones de cada pregunta (Fisher-Yates), para que la
+// respuesta correcta no esté siempre en la misma posición.
+function shuffledOptionOrders(): Record<number, number[]> {
+  const orders: Record<number, number[]> = {};
+  for (const q of SMR_QUIZ_QUESTIONS) {
+    const idx = q.options.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [idx[i], idx[j]] = [idx[j], idx[i]];
+    }
+    orders[q.id] = idx;
+  }
+  return orders;
+}
+
 export const InteractiveQuizAndGenerator: React.FC<{
   onApplyGeneratedOrder: (useCaseId: UseCaseId, budget: number, description: string) => void;
 }> = ({ onApplyGeneratedOrder }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
+  const [optionOrders, setOptionOrders] = useState(shuffledOptionOrders);
   const [generatedOrderText, setGeneratedOrderText] = useState<string | null>(null);
 
   const answeredCount = Object.keys(selectedAnswers).length;
@@ -161,22 +177,22 @@ export const InteractiveQuizAndGenerator: React.FC<{
       {
         useCaseId: 'ofimatica',
         budget: 475,
-        text: 'Encargo #104 — Clínica Dental: Necesitan un equipo silencioso de recepción por máximo 475 € con gráficos integrados, 16 GB RAM en Dual Channel y SSD NVMe de al menos 500 GB.',
+        text: 'Encargo #104 — Clínica Dental: Necesitan un equipo silencioso de recepción por máximo 475 € con gráficos integrados, 16 GB RAM en Dual Channel, SSD de al menos 480 GB y consumo pico ≤ 250 W.',
       },
       {
         useCaseId: 'gaming',
         budget: 1325,
-        text: 'Encargo #208 — Cliente Gaming Competitivo 1440p: Presupuesto cerrado de 1.325 €. Exige gráfica dedicada de al menos 12 GB VRAM, 32 GB RAM DDR5 y refrigeración por aire que quepa en su chasis sin tocar el cristal.',
+        text: 'Encargo #208 — Cliente Gaming Competitivo 1440p: Presupuesto cerrado de 1.325 €. Exige gráfica dedicada de al menos 12 GB VRAM, 32 GB RAM en Dual Channel, NVMe ≥ 1 TB y fuente 80 Plus con margen ≥ 20%.',
       },
       {
         useCaseId: 'virtualizacion',
         budget: 1850,
-        text: 'Encargo #312 — Aula de Redes y Sistemas (Servidor Proxmox): Presupuesto de 1.850 €. Requiere mínimo 12 núcleos / 24 hilos, 64 GB RAM DDR5, SSD NVMe rápido para VMs y disco duro secundario de ≥ 4 TB para copias.',
+        text: 'Encargo #312 — Aula de Redes y Sistemas (Servidor Proxmox): Presupuesto de 1.850 €. Requiere mínimo 12 núcleos / 24 hilos, 64 GB RAM, SSD NVMe ≥ 1 TB para VMs y una unidad secundaria para copias.',
       },
       {
         useCaseId: 'edicion',
         budget: 1650,
-        text: 'Encargo #419 — Productora de Vídeo Freelance: Presupuesto máximo de 1.650 €. Necesita procesador de ≥ 10 núcleos, GPU NVIDIA o AMD con ≥ 12 GB VRAM y fuente 80 Plus Gold.',
+        text: 'Encargo #419 — Productora de Vídeo Freelance: Presupuesto máximo de 1.650 €. Necesita procesador de ≥ 8 núcleos, GPU NVIDIA o AMD con ≥ 12 GB VRAM, 32 GB RAM en Dual Channel y NVMe ≥ 1 TB.',
       },
     ];
 
@@ -210,7 +226,10 @@ export const InteractiveQuizAndGenerator: React.FC<{
           {answeredCount > 0 && (
             <button
               type="button"
-              onClick={() => setSelectedAnswers({})}
+              onClick={() => {
+                setSelectedAnswers({});
+                setOptionOrders(shuffledOptionOrders());
+              }}
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -273,7 +292,8 @@ export const InteractiveQuizAndGenerator: React.FC<{
                 </h3>
 
                 <div className="space-y-1.5 pt-1">
-                  {q.options.map((opt, idx) => {
+                  {optionOrders[q.id].map((idx) => {
+                    const opt = q.options[idx];
                     const isThisSelected = userAnswer === idx;
                     const isThisCorrect = idx === q.correctIndex;
 
@@ -293,10 +313,14 @@ export const InteractiveQuizAndGenerator: React.FC<{
                       <button
                         key={idx}
                         type="button"
+                        disabled={isAnswered}
+                        aria-pressed={isThisSelected}
                         onClick={() =>
-                          setSelectedAnswers((prev) => ({ ...prev, [q.id]: idx }))
+                          setSelectedAnswers((prev) =>
+                            prev[q.id] === undefined ? { ...prev, [q.id]: idx } : prev
+                          )
                         }
-                        className={`w-full text-left p-2.5 rounded-lg border text-xs transition-colors cursor-pointer ${btnStyle}`}
+                        className={`w-full text-left p-2.5 rounded-lg border text-xs transition-colors ${isAnswered ? 'cursor-default' : 'cursor-pointer'} ${btnStyle}`}
                       >
                         {opt}
                       </button>

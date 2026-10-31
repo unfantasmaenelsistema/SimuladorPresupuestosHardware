@@ -221,7 +221,7 @@ export const RubricAndBudgetReport: React.FC<RubricAndBudgetReportProps> = ({
     a.href = url;
     a.download = `presupuesto-smr-${scenario.id}-${totalPrice}eur.txt`;
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const handleExportJson = () => {
@@ -255,7 +255,7 @@ export const RubricAndBudgetReport: React.FC<RubricAndBudgetReportProps> = ({
     a.href = url;
     a.download = `montaje-smr-${scenario.id}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const handleImportJsonFile = (e: React.ChangeEvent<HTMLInputElement>) => {

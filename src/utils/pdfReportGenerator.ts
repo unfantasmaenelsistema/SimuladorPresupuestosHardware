@@ -11,6 +11,7 @@ import {
   calculatePowerBreakdown,
   calculateTotalPrice,
 } from './compatibilityEngine';
+import { toWinAnsi } from './pdfText';
 
 export interface StudentReportMetadata {
   studentName: string;
@@ -25,6 +26,22 @@ interface LoadedLogoAsset {
   dataUrl: string;
   width: number;
   height: number;
+}
+
+function sanitizeDeep<T>(value: T): T {
+  if (typeof value === 'string') return toWinAnsi(value) as T;
+  if (Array.isArray(value)) return value.map((v) => sanitizeDeep(v)) as T;
+  return value;
+}
+
+// Envuelve las funciones de texto del documento: así también se limpian las celdas que
+// jspdf-autotable mide y escribe, y las medidas de ancho coinciden con lo impreso.
+function installWinAnsiSanitizer(doc: jsPDF) {
+  const d = doc as unknown as Record<string, (...args: unknown[]) => unknown>;
+  for (const fn of ['text', 'splitTextToSize', 'getTextWidth', 'getStringUnitWidth']) {
+    const original = d[fn].bind(doc);
+    d[fn] = (first: unknown, ...rest: unknown[]) => original(sanitizeDeep(first), ...rest);
+  }
 }
 
 /**
@@ -106,6 +123,7 @@ export async function generateBudgetPdfReport(params: {
     unit: 'mm',
     format: 'a4',
   });
+  installWinAnsiSanitizer(doc);
 
   const pageWidth = doc.internal.pageSize.getWidth(); // 210 mm
   const pageHeight = doc.internal.pageSize.getHeight(); // 297 mm
@@ -155,7 +173,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.text(
-    'MONTAJE Y REPARACION DE SISTEMAS MICROINFORMATICOS · UN FANTASMA EN EL SISTEMA',
+    'MONTAJE Y REPARACIÓN DE SISTEMAS MICROINFORMÁTICOS · UN FANTASMA EN EL SISTEMA',
     headerTextStartX,
     12
   );
@@ -163,7 +181,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(14);
   doc.text(
-    'INFORME TECNICO DE PRESUPUESTO Y COMPATIBILIDAD',
+    'INFORME TÉCNICO DE PRESUPUESTO Y COMPATIBILIDAD',
     headerTextStartX,
     19.5
   );
@@ -185,7 +203,7 @@ export async function generateBudgetPdfReport(params: {
   });
   doc.setTextColor(148, 163, 184);
   doc.text(
-    `Ref: ${metadata.reportCode}  |  Fecha de emision: ${dateStr}`,
+    `Ref: ${metadata.reportCode}  |  Fecha de emisión: ${dateStr}`,
     headerTextStartX,
     31
   );
@@ -201,7 +219,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setTextColor(15, 23, 42);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.text('DATOS DEL ALUMNO/A Y ENCARGO TECNICO', margin + 4, currentY + 6);
+  doc.text('DATOS DEL ALUMNO/A Y ENCARGO TÉCNICO', margin + 4, currentY + 6);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.2);
@@ -226,7 +244,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(2, 132, 199);
   doc.text(
-    `Caso de Uso: ${scenario.title} (Limite: ${budgetLimit} EUR)`,
+    `Caso de Uso: ${scenario.title} (Límite: ${budgetLimit} €)`,
     margin + 4,
     currentY + 28
   );
@@ -246,7 +264,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.setTextColor(71, 85, 105);
-  doc.text('CALIFICACION RUBRICA', scoreBoxX + 28, currentY + 6, {
+  doc.text('CALIFICACIÓN (RÚBRICA)', scoreBoxX + 28, currentY + 6, {
     align: 'center',
   });
 
@@ -290,7 +308,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(15, 23, 42);
-  doc.text('1. DESGLOSE ECONOMICO Y ESPECIFICACIONES DE COMPONENTES', margin, currentY);
+  doc.text('1. DESGLOSE ECONÓMICO Y ESPECIFICACIONES DE COMPONENTES', margin, currentY);
   currentY += 2.5;
 
   const budgetRows = SLOT_DEFINITIONS.map((slot, index) => {
@@ -318,7 +336,7 @@ export async function generateBudgetPdfReport(params: {
         '#',
         'Ranura',
         'Componente Seleccionado',
-        'Especificaciones Tecnicas Clave',
+        'Especificaciones Técnicas Clave',
         'Base s/IVA',
         'IVA 21%',
         'Total c/IVA',
@@ -330,7 +348,7 @@ export async function generateBudgetPdfReport(params: {
         '',
         '',
         '',
-        `Limite Presupuesto Cliente: ${budgetLimit.toFixed(2)} € (${
+        `Límite Presupuesto Cliente: ${budgetLimit.toFixed(2)} € (${
           budgetDiff >= 0
             ? `Ahorro: +${budgetDiff.toFixed(2)} €`
             : `Excedido: ${budgetDiff.toFixed(2)} €`
@@ -378,7 +396,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFontSize(10);
   doc.setTextColor(15, 23, 42);
   doc.text(
-    '2. TELEMETRIA ELECTRICA (+12V), TERMICA (TDP) Y COTAS MECANICAS (MM)',
+    '2. TELEMETRÍA ELÉCTRICA (+12V), TÉRMICA (TDP) Y COTAS MECÁNICAS (MM)',
     margin,
     currentY
   );
@@ -414,8 +432,8 @@ export async function generateBudgetPdfReport(params: {
       [
         'Holgura Altura Disipador',
         'Holgura Longitud GPU',
-        'Balance Termico TDP',
-        'Balance Electrico PSU (+12V)',
+        'Balance Térmico TDP',
+        'Balance Eléctrico PSU (+12V)',
       ],
     ],
     body: [[coolerMetric, gpuMetric, tdpMetric, psuMetric]],
@@ -441,7 +459,7 @@ export async function generateBudgetPdfReport(params: {
   doc.setFontSize(10);
   doc.setTextColor(15, 23, 42);
   doc.text(
-    '3. AUDITORIA DE COMPATIBILIDAD FISICA Y LOGICA (10 PUNTOS DE CONTROL)',
+    '3. AUDITORÍA DE COMPATIBILIDAD FÍSICA Y LÓGICA (10 PUNTOS DE CONTROL)',
     margin,
     currentY
   );
@@ -472,8 +490,8 @@ export async function generateBudgetPdfReport(params: {
       [
         'Subsistema Evaluado',
         'Estado',
-        'Medicion / Limite',
-        'Diagnostico y Justificacion Tecnica',
+        'Medición / Límite',
+        'Diagnóstico y Justificación Técnica',
       ],
     ],
     body: checkRows,
@@ -592,7 +610,7 @@ export async function generateBudgetPdfReport(params: {
 
     doc.setTextColor(100, 116, 139);
     doc.text(
-      `|  Pag. ${p} de ${totalPages}`,
+      `|  Pág. ${p} de ${totalPages}`,
       pageWidth - margin,
       pageHeight - 6.5,
       { align: 'right' }

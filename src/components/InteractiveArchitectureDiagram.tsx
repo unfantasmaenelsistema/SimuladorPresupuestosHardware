@@ -107,8 +107,11 @@ export const InteractiveArchitectureDiagram: React.FC<
       }
     }
 
-    // 3. Check PSU
-    if (!build.psu || psuSeverity === 'error') {
+    // 3. Check PSU (una fuente sin cables PCIe no se apaga: la gráfica se queda sin alimentar → fallo VGA)
+    const gpuWithoutPciePower = Boolean(
+      build.psu && build.gpu?.requiresPciePowerConnector && !build.psu.hasPciePowerConnectors
+    );
+    if (!build.psu || (psuSeverity === 'error' && !gpuWithoutPciePower)) {
       setPostState({
         tested: true,
         success: false,
@@ -116,7 +119,7 @@ export const InteractiveArchitectureDiagram: React.FC<
         beepCode: 'Corte por Protección OPP/OCP (Sin pitidos)',
         diagnosticMessage: !build.psu
           ? 'No se ha instalado fuente de alimentación (conectores ATX 24 pines y EPS 8 pines desconectados).'
-          : 'La fuente de alimentación se apaga por protección de sobrecarga en la línea de +12V o carece de conectores PCIe requeridos por la GPU.',
+          : 'La fuente de alimentación se apaga por protección de sobrecarga (OPP/OCP) en la línea de +12V al superar su potencia real.',
       });
       return;
     }
@@ -131,7 +134,7 @@ export const InteractiveArchitectureDiagram: React.FC<
         diagnosticMessage:
           !build.cpu || socketSeverity === 'error'
             ? 'El procesador no está instalado o el socket es incompatible con la placa base.'
-            : 'Protección térmica CPU Over Temperature Error: el disipador no está instalado o su capacidad TDP es inferior al mínimo de la CPU.',
+            : 'CPU Over Temperature: el disipador no llega ni al TDP base del procesador. El equipo entra en la BIOS, pero la CPU alcanza su TJMax (95-100 °C) en segundos, estrangula la frecuencia (Thermal Throttling) y bajo carga se apaga por protección THERMTRIP.',
       });
       return;
     }
@@ -150,14 +153,15 @@ export const InteractiveArchitectureDiagram: React.FC<
     }
 
     // 6. Check VGA (EZ-Debug LED: VGA)
-    if (!build.gpu || videoSeverity === 'error') {
+    if (!build.gpu || videoSeverity === 'error' || gpuWithoutPciePower) {
       setPostState({
         tested: true,
         success: false,
         haltedStage: 'VGA',
-        beepCode: 'AMI BIOS: 1 pitido largo y 3 cortos (Fallo VGA)',
-        diagnosticMessage:
-          'LED EZ-Debug VGA encendido: el procesador no dispone de gráficos integrados (iGPU) y no se ha detectado ninguna tarjeta gráfica dedicada en el bus PCIe.',
+        beepCode: 'AMI BIOS: 1 pitido largo y 8 cortos (Fallo VGA)',
+        diagnosticMessage: gpuWithoutPciePower
+          ? `LED EZ-Debug VGA encendido: la ${build.gpu?.name} necesita alimentación PCIe de 8 pines, pero la fuente ${build.psu?.name} no tiene esos cables. La tarjeta no se inicializa y no hay imagen.`
+          : 'LED EZ-Debug VGA encendido: el procesador no dispone de gráficos integrados (iGPU) y no se ha detectado ninguna tarjeta gráfica dedicada en el bus PCIe.',
       });
       return;
     }
@@ -239,7 +243,7 @@ export const InteractiveArchitectureDiagram: React.FC<
           </h2>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={runPostSimulation}
@@ -384,8 +388,8 @@ export const InteractiveArchitectureDiagram: React.FC<
               </button>
               {build.motherboard && (
                 <div className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                  VRM máx: {build.motherboard.maxRecommendedCpuWatts}W · PCIe{' '}
-                  {build.motherboard.maxPcieVersion}.0
+                  VRM máx: {build.motherboard.maxRecommendedCpuWatts}W · PCIe x16{' '}
+                  {build.motherboard.maxPcieVersion}.0 · M.2 {build.motherboard.m2PcieVersion}.0
                 </div>
               )}
             </div>

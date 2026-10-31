@@ -53,6 +53,23 @@ export function calculatePowerBreakdown(build: PCBuildState): PowerBreakdown {
   };
 }
 
+// Generación PCIe con la que trabajará realmente una unidad M.2: manda la ranura M.2
+// de la placa y las líneas de la CPU. En LGA1700 (Intel 12.ª-14.ª) las líneas PCIe 5.0
+// de la CPU van a la ranura gráfica x16; el M.2 conectado a la CPU es PCIe 4.0.
+export function effectiveM2PcieGen(build: PCBuildState): number {
+  const boardGen = build.motherboard?.m2PcieVersion ?? 4;
+  if (!build.cpu) return boardGen;
+  const cpuGen =
+    build.cpu.socket === 'LGA1700' ? Math.min(4, build.cpu.pcieVersion) : build.cpu.pcieVersion;
+  return Math.min(boardGen, cpuGen);
+}
+
+function storagePcieGen(iface: string): number {
+  if (iface === 'NVMe PCIe 5.0') return 5;
+  if (iface === 'NVMe PCIe 4.0') return 4;
+  return 3;
+}
+
 export function calculateTotalPrice(build: PCBuildState): number {
   return (
     (build.cpu?.price ?? 0) +
@@ -182,6 +199,17 @@ export function runCompatibilityChecks(build: PCBuildState): CompatibilityCheckI
         technicalExplanation: `Al instalar un único módulo DIMM, el controlador de memoria opera con un solo canal de 64 bits en lugar de 128 bits (Dual Channel), reduciendo el rendimiento en juegos, ofimática con iGPU y virtualización entre un 15% y un 30%.`,
         measuredValue: '1 módulo (Single Channel)',
         limitValue: '2 módulos (Dual Channel)',
+      });
+    } else if (build.ram.ramType === 'DDR5' && build.ram.modules === 4) {
+      checks.push({
+        id: 'check-ram',
+        category: 'Memoria RAM',
+        title: 'DDR5 con 4 Módulos (2 por Canal): Frecuencia Reducida',
+        severity: 'warning',
+        summary: `4 módulos DDR5 ocupan las 4 ranuras: la placa bajará de ${build.ram.speedMhz} MT/s para mantener la estabilidad.`,
+        technicalExplanation: `Con dos módulos por canal (2DPC) la señal DDR5 se degrada y el controlador de memoria del procesador suele limitarse a unos 3600–5200 MT/s; el perfil XMP/EXPO de ${build.ram.speedMhz} MT/s probablemente no será estable. Para la misma capacidad es preferible un kit de 2 módulos de mayor densidad (ej. 2x32 GB), que además deja ranuras libres para ampliar.`,
+        measuredValue: `4x${build.ram.capacityPerModuleGb} GB DDR5 (2DPC)`,
+        limitValue: '2 módulos (1DPC) recomendado',
       });
     } else {
       checks.push({
@@ -366,7 +394,7 @@ export function runCompatibilityChecks(build: PCBuildState): CompatibilityCheckI
       severity: 'ok',
       summary:
         build.gpu.lengthMm === 0
-          ? 'Uso de iGPU integrada (0 mm ocupados en ranura PCIe x16).'
+          ? 'Sin tarjeta gráfica dedicada (0 mm ocupados en la ranura PCIe x16).'
           : `GPU de ${build.gpu.lengthMm} mm compatible con límite de ${build.pcCase.maxGpuLengthMm} mm (+${clearance} mm libres).`,
       technicalExplanation:
         build.gpu.lengthMm === 0
@@ -522,27 +550,25 @@ export function runCompatibilityChecks(build: PCBuildState): CompatibilityCheckI
         limitValue: 'Recomendado SSD NVMe',
       });
     } else {
-      const storagePcieGen =
-        build.storagePrimary.interface === 'NVMe PCIe 5.0'
-          ? 5
-          : build.storagePrimary.interface === 'NVMe PCIe 4.0'
-          ? 4
-          : 3;
-      const effectivePcieGen = Math.min(
-        build.cpu?.pcieVersion ?? 4,
-        build.motherboard.maxPcieVersion
+      const effectivePcieGen = effectiveM2PcieGen(build);
+      const limitedDrive = [build.storagePrimary, build.storageSecondary].find(
+        (d) => d?.type === 'NVMe M.2' && storagePcieGen(d.interface) > effectivePcieGen
       );
 
-      if ( build.storagePrimary.type === 'NVMe M.2' && storagePcieGen > effectivePcieGen ) {
+      if (limitedDrive) {
+        const busLimit =
+          build.motherboard.m2PcieVersion <= effectivePcieGen
+            ? `las ranuras M.2 de la placa ${build.motherboard.name} son PCIe ${build.motherboard.m2PcieVersion}.0`
+            : `el procesador ${build.cpu?.name ?? ''} solo ofrece PCIe ${effectivePcieGen}.0 para el M.2`;
         checks.push({
           id: 'check-storage',
           category: 'Almacenamiento y Buses',
           title: 'SSD NVMe Funcionando en Modo PCIe Inferior (Retrocompatible)',
           severity: 'warning',
-          summary: `Unidad ${build.storagePrimary.interface} operará a velocidad PCIe ${effectivePcieGen}.0 por límite de CPU/Placa.`,
-          technicalExplanation: `El protocolo PCIe es retrocompatible: el SSD ${build.storagePrimary.name} funcionará sin problemas, pero su velocidad secuencial máxima quedará limitada al ancho de banda PCIe ${effectivePcieGen}.0 (~3.500 MB/s en PCIe 3.0 o ~7.400 MB/s en PCIe 4.0).`,
-          measuredValue: build.storagePrimary.interface,
-          limitValue: `Bus PCIe ${effectivePcieGen}.0`,
+          summary: `Unidad ${limitedDrive.interface} operará a velocidad PCIe ${effectivePcieGen}.0 porque ${busLimit}.`,
+          technicalExplanation: `El protocolo PCIe es retrocompatible: el SSD ${limitedDrive.name} funcionará sin problemas, pero su velocidad secuencial máxima quedará limitada al ancho de banda PCIe ${effectivePcieGen}.0 (~3.500 MB/s en PCIe 3.0 o ~7.400 MB/s en PCIe 4.0). Estás pagando una velocidad que el equipo no puede aprovechar.`,
+          measuredValue: limitedDrive.interface,
+          limitValue: `M.2 a PCIe ${effectivePcieGen}.0`,
         });
       } else {
         const totalCap =
@@ -671,6 +697,22 @@ export function evaluateBuild(
       label: 'Eficiencia energética de oficina (Consumo pico ≤ 250 W)',
       met: lowPowerMet,
       detail: `Consumo pico estimado: ${power.totalMaxPeakWatts} W`,
+    });
+  }
+
+  // Gaming: fuente 80 Plus con margen ≥ 20 % sobre el pico (carga ≤ 80 %)
+  if (scenario.id === 'gaming') {
+    const psuMet =
+      Boolean(build.psu) &&
+      build.psu!.efficiency !== 'Sin Certificación' &&
+      power.psuLoadPercentage > 0 &&
+      power.psuLoadPercentage <= 80;
+    checklist.push({
+      label: 'Fuente 80 Plus con margen ≥ 20% sobre el consumo pico',
+      met: psuMet,
+      detail: build.psu
+        ? `${build.psu.name} (${build.psu.efficiency}) · carga pico ${power.psuLoadPercentage}%`
+        : 'Pendiente de seleccionar fuente',
     });
   }
 
