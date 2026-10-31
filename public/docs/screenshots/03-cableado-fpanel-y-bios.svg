@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .sans { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="14" fill="#020617" stroke="#1e293b" stroke-width="2" />
+
+  <!-- Container -->
+  <rect x="24" y="24" width="1152" height="572" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+  <text x="48" y="54" fill="#94a3b8" font-size="12" class="sans">Práctica de Taller SMR — Fase Post-Ensamblaje Mecánico</text>
+  <text x="48" y="78" fill="#f8fafc" font-size="19" font-weight="700" class="sans">Simulador de Cableado Interno (F_PANEL / PSU) y Configuración UEFI/BIOS</text>
+  <line x1="48" y1="96" x2="1150" y2="96" stroke="#1e293b" />
+
+  <!-- Left 6 Cols: Internal PSU Cables & F_PANEL 9-Pin Header -->
+  <rect x="48" y="114" width="540" height="460" rx="10" fill="#020617" stroke="#1e293b" />
+  <text x="68" y="142" fill="#f8fafc" font-size="15" font-weight="700" class="sans">1. Cabezal Panel Frontal Estándar Intel (JFP1 / F_PANEL 2×5)</text>
+  <text x="68" y="162" fill="#94a3b8" font-size="12" class="sans">Pines con polaridad (+/-) en diodos LED vs. pulsadores sin polaridad</text>
+
+  <!-- 2x5 Pin Header Visual Matrix -->
+  <rect x="68" y="178" width="500" height="170" rx="10" fill="#090d16" stroke="#334155" />
+  <text x="84" y="200" fill="#94a3b8" font-size="10" class="mono">FILA SUPERIOR (Pines Pares: 2, 4, 6, 8, 10 — Pin 10 Key Sin Pin)</text>
+
+  <!-- Top Row Pins -->
+  <rect x="84" y="210" width="185" height="52" rx="6" fill="#064e3b" stroke="#10b981" />
+  <text x="96" y="230" fill="#a7f3d0" font-size="11" font-weight="700" class="mono">Pines 2(+) y 4(-): PWR_LED</text>
+  <text x="96" y="248" fill="#34d399" font-size="11" class="mono">● Polaridad +/- Correcta</text>
+
+  <rect x="279" y="210" width="185" height="52" rx="6" fill="#0c4a6e" stroke="#38bdf8" />
+  <text x="291" y="230" fill="#bae6fd" font-size="11" font-weight="700" class="mono">Pines 6 y 8: POWER_SW</text>
+  <text x="291" y="248" fill="#38bdf8" font-size="11" class="mono">● Conectado (Sin polaridad)</text>
+
+  <rect x="474" y="210" width="78" height="52" rx="6" fill="#020617" stroke="#334155" stroke-dasharray="4 2" />
+  <text x="513" y="234" fill="#64748b" font-size="10" text-anchor="middle" class="mono">Pin 10</text>
+  <text x="513" y="248" fill="#64748b" font-size="10" text-anchor="middle" class="mono">VACÍO</text>
+
+  <!-- Bottom Row Pins -->
+  <rect x="84" y="272" width="185" height="52" rx="6" fill="#064e3b" stroke="#10b981" />
+  <text x="96" y="292" fill="#a7f3d0" font-size="11" font-weight="700" class="mono">Pines 1(+) y 3(-): HDD_LED</text>
+  <text x="96" y="310" fill="#34d399" font-size="11" class="mono">● Polaridad +/- Correcta</text>
+
+  <rect x="279" y="272" width="185" height="52" rx="6" fill="#0c4a6e" stroke="#38bdf8" />
+  <text x="291" y="292" fill="#bae6fd" font-size="11" font-weight="700" class="mono">Pines 5 y 7: RESET_SW</text>
+  <text x="291" y="310" fill="#38bdf8" font-size="11" class="mono">● Conectado (Sin polaridad)</text>
+
+  <rect x="474" y="272" width="78" height="52" rx="6" fill="#020617" stroke="#1e293b" />
+  <text x="513" y="296" fill="#64748b" font-size="10" text-anchor="middle" class="mono">Pin 9</text>
+  <text x="513" y="310" fill="#64748b" font-size="10" text-anchor="middle" class="mono">NC</text>
+
+  <!-- PSU Cables Summary -->
+  <rect x="68" y="362" width="500" height="60" rx="8" fill="#0f172a" stroke="#1e293b" />
+  <text x="84" y="386" fill="#f8fafc" font-size="12" font-weight="700" class="sans">Alimentación Placa ATX 24-Pin y CPU EPS 12V (4+4 Pines)</text>
+  <text x="84" y="406" fill="#34d399" font-size="11" class="mono">✓ ATX_PWR1 Conectado · ✓ CPU_PWR1 EPS 8-Pin OK · ✓ CPU_FAN PWM 4-Pin OK</text>
+
+  <rect x="68" y="434" width="500" height="122" rx="8" fill="#4c0519" fill-opacity="0.35" stroke="#e11d48" />
+  <text x="84" y="458" fill="#fda4af" font-size="12" font-weight="700" class="sans">⚡ Simulación de Error de Taller: Cable PCIe 6+2 forzado en EPS CPU</text>
+  <text x="84" y="480" fill="#fecdd3" font-size="11" class="sans">El simulador enseña por qué jamás debe forzarse un conector PCIe de gráfica</text>
+  <text x="84" y="498" fill="#fecdd3" font-size="11" class="sans">en el zócalo EPS 12V de la placa base: tienen la fila de +12V y Masa (GND)</text>
+  <text x="84" y="516" fill="#fecdd3" font-size="11" class="sans">invertidas, provocando un cortocircuito directo que bloquea la fuente (SCP).</text>
+
+  <!-- Right 6 Cols: UEFI BIOS Utility -->
+  <rect x="608" y="114" width="542" height="460" rx="10" fill="#090d16" stroke="#334155" stroke-width="1.5" />
+  <text x="630" y="144" fill="#38bdf8" font-size="14" font-weight="700" class="mono">UEFI BIOS UTILITY — ADVANCED MODE (F10: Save &amp; Exit)</text>
+  <text x="630" y="164" fill="#94a3b8" font-size="11" class="mono">Placa: Gigabyte B650 GAMING X AX V2  |  CPU: AMD Ryzen 5 7600X</text>
+  <line x1="630" y1="176" x2="1128" y2="176" stroke="#1e293b" />
+
+  <!-- BIOS Setting 1 -->
+  <rect x="630" y="192" width="498" height="74" rx="8" fill="#020617" stroke="#1e293b" />
+  <text x="646" y="216" fill="#f8fafc" font-size="12" font-weight="700" class="mono">1. Extreme Memory Profile (Intel XMP 3.0 / AMD EXPO)</text>
+  <text x="646" y="236" fill="#94a3b8" font-size="11" class="sans">Desbloquea los 6000 MT/s nominales frente a los 4800 MT/s base JEDEC.</text>
+  <rect x="980" y="206" width="132" height="30" rx="6" fill="#0284c7" />
+  <text x="1046" y="225" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle" class="mono">ENABLED (6000)</text>
+
+  <!-- BIOS Setting 2 -->
+  <rect x="630" y="278" width="498" height="74" rx="8" fill="#020617" stroke="#1e293b" />
+  <text x="646" y="302" fill="#f8fafc" font-size="12" font-weight="700" class="mono">2. Virtualización Hardware (Intel VT-x / AMD SVM + IOMMU)</text>
+  <text x="646" y="322" fill="#94a3b8" font-size="11" class="sans">Obligatorio para hipervisores Proxmox VE, VMware ESXi, VirtualBox y Docker.</text>
+  <rect x="980" y="292" width="132" height="30" rx="6" fill="#059669" />
+  <text x="1046" y="311" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle" class="mono">ENABLED (SVM)</text>
+
+  <!-- BIOS Setting 3 -->
+  <rect x="630" y="364" width="498" height="74" rx="8" fill="#020617" stroke="#1e293b" />
+  <text x="646" y="388" fill="#f8fafc" font-size="12" font-weight="700" class="mono">3. Above 4G Decoding &amp; Resizable BAR (Smart Access Memory)</text>
+  <text x="646" y="408" fill="#94a3b8" font-size="11" class="sans">Permite a la CPU direccionar los 16 GB de VRAM completos sin bloques de 256 MB.</text>
+  <rect x="980" y="378" width="132" height="30" rx="6" fill="#0284c7" />
+  <text x="1046" y="397" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle" class="mono">ENABLED (Auto)</text>
+
+  <!-- BIOS Setting 4 -->
+  <rect x="630" y="450" width="498" height="104" rx="8" fill="#020617" stroke="#1e293b" />
+  <text x="646" y="474" fill="#f8fafc" font-size="12" font-weight="700" class="mono">4. Modo de Arranque: UEFI Nativo + GPT + fTPM 2.0 + Secure Boot</text>
+  <text x="646" y="496" fill="#94a3b8" font-size="11" class="sans">Configuración lista para instalar Windows 11 Pro / Debian Proxmox sobre NVMe.</text>
+  <text x="646" y="528" fill="#34d399" font-size="12" font-weight="700" class="mono">Estado global Firmware: ÓPTIMO PARA ENTREGA AL CLIENTE</text>
+</svg>

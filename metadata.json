@@ -1,0 +1,6 @@
+{
+  "name": "Simulador de Presupuestos y Compatibilidad de Hardware — SMR",
+  "description": "Simulador interactivo de montaje de equipos microinformáticos, cálculo de presupuestos y validación en tiempo real de compatibilidad física y lógica para formación profesional.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

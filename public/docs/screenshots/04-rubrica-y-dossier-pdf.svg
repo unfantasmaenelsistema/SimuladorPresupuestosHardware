@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="100%" height="100%">
+  <defs>
+    <style>
+      .sans { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="640" rx="14" fill="#020617" stroke="#1e293b" stroke-width="2" />
+
+  <!-- Top Section: Rubric Evaluation & PDF Export Bar -->
+  <rect x="24" y="24" width="1152" height="592" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+  <text x="48" y="54" fill="#94a3b8" font-size="12" class="sans">Evaluación Formativa y Generador de Dossier PDF Oficial (Ref: SMR-GAMI-2189)</text>
+  <text x="48" y="78" fill="#f8fafc" font-size="19" font-weight="700" class="sans">Rúbrica de Calificación (0–10 pts) e Informe PDF Estilizado</text>
+
+  <rect x="860" y="44" width="290" height="38" rx="8" fill="#0284c7" />
+  <text x="1005" y="68" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle" class="sans">⬇ Descargar Informe PDF Estilizado</text>
+
+  <line x1="48" y1="96" x2="1150" y2="96" stroke="#1e293b" />
+
+  <!-- Left 5 Cols: 4 Rubric Pillars + Score -->
+  <rect x="48" y="114" width="430" height="145" rx="10" fill="#020617" stroke="#10b981" stroke-width="1.5" />
+  <text x="68" y="140" fill="#94a3b8" font-size="12" class="sans">Nota Global del Montaje (Evaluación Automática)</text>
+  <text x="68" y="190" fill="#f8fafc" font-size="44" font-weight="700" class="mono">9.8 <tspan font-size="20" fill="#64748b">/ 10</tspan></text>
+  <text x="68" y="220" fill="#34d399" font-size="13" font-weight="700" class="sans">✓ Sobresaliente — Montaje Profesional Certificado</text>
+  <text x="68" y="242" fill="#94a3b8" font-size="11" class="mono">Comp: 4.0/4.0 | Presup: 2.0/2.0 | Caso: 2.5/2.5 | Balance: 1.3/1.5</text>
+
+  <!-- 80 Plus TCO & Bottleneck Summary Card -->
+  <rect x="48" y="274" width="430" height="318" rx="10" fill="#020617" stroke="#1e293b" />
+  <text x="68" y="302" fill="#f8fafc" font-size="15" font-weight="700" class="sans">Analizador de Rendimiento y Coste 80 Plus</text>
+  <text x="68" y="328" fill="#38bdf8" font-size="12" font-weight="700" class="mono">• Balance CPU/GPU (1440p): Equilibrio Óptimo (&lt;8% desv.)</text>
+  <text x="68" y="352" fill="#cbd5e1" font-size="12" class="mono">• eSports (CS2 / Valorant): ~255 FPS en QHD 1440p</text>
+  <text x="68" y="376" fill="#cbd5e1" font-size="12" class="mono">• Triple-A Ultra 1440p: ~96 FPS estables</text>
+  <text x="68" y="400" fill="#cbd5e1" font-size="12" class="mono">• Capacidad Virtualización: Hasta 7 VMs simultáneas</text>
+
+  <line x1="68" y1="418" x2="458" y2="418" stroke="#1e293b" />
+  <text x="68" y="442" fill="#fbbf24" font-size="13" font-weight="700" class="sans">⚡ Calculadora Eléctrica TCO (8h/día × 250 días)</text>
+  <text x="68" y="468" fill="#cbd5e1" font-size="12" class="mono">Consumo DC Interno: 367 W  |  Enchufe AC (Gold 90%): 408 W</text>
+  <text x="68" y="492" fill="#34d399" font-size="12" font-weight="700" class="mono">Ahorro anual 80+ Gold vs. Fuente Genérica: +29.50 €/año</text>
+  <text x="68" y="518" fill="#94a3b8" font-size="11" class="sans">Evita disipar 81W continuos de calor residual dentro del aula taller.</text>
+
+  <!-- Right 7 Cols: Simulated A4 Official PDF Document Sheet -->
+  <rect x="500" y="114" width="650" height="478" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+
+  <!-- A4 PDF Dark Header -->
+  <rect x="500" y="114" width="650" height="74" rx="6" fill="#0f172a" />
+  <rect x="500" y="184" width="650" height="4" fill="#0284c7" />
+  <rect x="518" y="126" width="46" height="46" rx="6" fill="#f8fafc" />
+  <text x="541" y="154" fill="#0f172a" font-size="11" font-weight="700" text-anchor="middle" class="mono">LOGO</text>
+
+  <text x="578" y="136" fill="#38bdf8" font-size="9.5" font-weight="700" class="sans">MONTAJE Y REPARACIÓN DE SISTEMAS MICROINFORMÁTICOS · UN FANTASMA EN EL SISTEMA</text>
+  <text x="578" y="156" fill="#ffffff" font-size="15" font-weight="700" class="sans">INFORME TÉCNICO DE PRESUPUESTO Y COMPATIBILIDAD</text>
+  <text x="578" y="173" fill="#cbd5e1" font-size="10" class="mono">https://www.unfantasmaenelsistema.com/  |  Ref: SMR-GAMI-2189</text>
+
+  <!-- A4 PDF Student Box -->
+  <rect x="518" y="200" width="450" height="58" rx="4" fill="#f8fafc" stroke="#cbd5e1" />
+  <text x="528" y="216" fill="#0f172a" font-size="10" font-weight="700" class="sans">DATOS DEL ALUMNO/A Y ENCARGO TÉCNICO</text>
+  <text x="528" y="232" fill="#334155" font-size="10" class="sans">Alumno/a: Laura Gómez Pérez  |  Grupo: 1º CFGM SMR (IES Tecnológico)</text>
+  <text x="528" y="248" fill="#0284c7" font-size="10" font-weight="700" class="sans">Caso de Uso: Estación Gaming 1440p Alto Rendimiento (Límite: 1.450 €)</text>
+
+  <rect x="978" y="200" width="154" height="58" rx="4" fill="#ecfdf5" stroke="#10b981" />
+  <text x="1055" y="218" fill="#065f46" font-size="9" font-weight="700" text-anchor="middle" class="sans">NOTA RÚBRICA</text>
+  <text x="1055" y="240" fill="#059669" font-size="18" font-weight="700" text-anchor="middle" class="mono">9.8 / 10</text>
+  <text x="1055" y="253" fill="#047857" font-size="8.5" font-weight="700" text-anchor="middle" class="mono">POST BIOS: OK</text>
+
+  <!-- A4 PDF Invoice Table Preview -->
+  <text x="518" y="276" fill="#0f172a" font-size="10.5" font-weight="700" class="sans">1. DESGLOSE ECONÓMICO Y ESPECIFICACIONES DE COMPONENTES</text>
+  <rect x="518" y="282" width="614" height="20" fill="#0f172a" />
+  <text x="526" y="295" fill="#ffffff" font-size="9" font-weight="700" class="sans">#   Ranura          Componente Seleccionado                         Especificación Clave                 Total c/IVA</text>
+
+  <rect x="518" y="302" width="614" height="18" fill="#f8fafc" stroke="#e2e8f0" />
+  <text x="526" y="314" fill="#1e293b" font-size="9" class="mono">1   CPU             AMD Ryzen 5 7600X                               Socket AM5 | 6C/12T | 105W            205.00 €</text>
+
+  <rect x="518" y="320" width="614" height="18" fill="#ffffff" stroke="#e2e8f0" />
+  <text x="526" y="332" fill="#1e293b" font-size="9" class="mono">2   Placa Base      Gigabyte B650 GAMING X AX V2                    AM5 (B650) | ATX | 4x DDR5            168.00 €</text>
+
+  <rect x="518" y="338" width="614" height="18" fill="#f8fafc" stroke="#e2e8f0" />
+  <text x="526" y="350" fill="#1e293b" font-size="9" class="mono">3   RAM             Corsair Vengeance 32GB (2x16GB) DDR5-6000       32GB Dual Channel DDR5-6000 CL30      114.00 €</text>
+
+  <rect x="518" y="356" width="614" height="18" fill="#ffffff" stroke="#e2e8f0" />
+  <text x="526" y="368" fill="#1e293b" font-size="9" class="mono">4   Disipador       Thermalright Peerless Assassin 120 SE           Doble Torre | 245W | Altura 155mm      39.00 €</text>
+
+  <rect x="518" y="374" width="614" height="18" fill="#f8fafc" stroke="#e2e8f0" />
+  <text x="526" y="386" fill="#1e293b" font-size="9" class="mono">5   GPU / Vídeo     PowerColor Hellhound Radeon RX 7800 XT 16GB     16GB VRAM | 263W | Largo 322mm        499.00 €</text>
+
+  <rect x="518" y="392" width="614" height="22" fill="#ecfdf5" stroke="#a7f3d0" />
+  <text x="526" y="407" fill="#065f46" font-size="9.5" font-weight="700" class="mono">Base s/IVA: 1.118,18 €   |   IVA (21%): 234,82 €   |   TOTAL PRESUPUESTO: 1.353,00 € (Ahorro: +97,00 €)</text>
+
+  <!-- A4 PDF Compatibility Matrix & Signatures Preview -->
+  <text x="518" y="432" fill="#0f172a" font-size="10.5" font-weight="700" class="sans">2. AUDITORÍA DE COMPATIBILIDAD (10 PUNTOS) Y FIRMAS DE ENTREGA</text>
+  <rect x="518" y="438" width="614" height="68" rx="4" fill="#f8fafc" stroke="#cbd5e1" />
+  <text x="528" y="454" fill="#166534" font-size="9" font-weight="700" class="mono">[COMPATIBLE] Socket AM5/B650  |  [COMPATIBLE] RAM DDR5 Dual Channel  |  [COMPATIBLE] Señal Vídeo PCIe</text>
+  <text x="528" y="472" fill="#166534" font-size="9" font-weight="700" class="mono">[COMPATIBLE] Holgura Cooler (+15mm)  |  [COMPATIBLE] Largo GPU (+38mm)  |  [COMPATIBLE] PSU +12V (63%)</text>
+  <text x="528" y="492" fill="#334155" font-size="9" class="sans">Memoria justificativa: Configuración equilibrada para QHD 1440p sin cuello de botella y margen del 37% en PSU.</text>
+
+  <!-- Signature Boxes -->
+  <rect x="518" y="516" width="298" height="54" rx="4" fill="#ffffff" stroke="#cbd5e1" />
+  <text x="528" y="532" fill="#64748b" font-size="9" font-weight="700" class="sans">Firma del Alumno/a: Laura Gómez Pérez</text>
+
+  <rect x="834" y="516" width="298" height="54" rx="4" fill="#ffffff" stroke="#cbd5e1" />
+  <text x="844" y="532" fill="#64748b" font-size="9" font-weight="700" class="sans">Sello y Validación Docente (Dpto. Informática):</text>
+</svg>
