@@ -127,8 +127,8 @@ export const WorkshopReferenceGuide: React.FC = () => {
               <strong className="text-slate-900 dark:text-slate-100">Secuencia EZ-Debug LED / AMI BIOS en el Arranque:</strong>
               <div className="mt-1 space-y-1 font-mono text-[11px]">
                 <div>1. LED CPU → Comprueba procesador, socket y conector EPS 12V de 8 pines.</div>
-                <div>2. LED DRAM → Entrenamiento de memoria RAM (3 pitidos cortos si falla).</div>
-                <div>3. LED VGA → Inicialización gráfica iGPU/PCIe (1 pitido largo + 3 cortos si un procesador &ldquo;F&rdquo; no tiene gráfica dedicada).</div>
+                <div>2. LED DRAM → Entrenamiento de memoria RAM (AMI: 3 pitidos cortos si falla).</div>
+                <div>3. LED VGA → Inicialización gráfica iGPU/PCIe (AMI: 1 pitido largo + 8 cortos si un procesador &ldquo;F&rdquo; no tiene gráfica dedicada; en Award son 1 largo + 2 cortos).</div>
                 <div>4. LED BOOT → Búsqueda de partición EFI en unidad M.2 NVMe o SATA.</div>
               </div>
             </div>

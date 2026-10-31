@@ -206,7 +206,7 @@ export const ComponentCatalogSelector: React.FC<ComponentCatalogSelectorProps> =
             </span>
             <span aria-hidden="true">·</span>
             <span>
-              {item.m2Slots}x M.2 PCIe {item.maxPcieVersion}.0 + {item.sataPorts}x SATA
+              PCIe x16 {item.maxPcieVersion}.0 · {item.m2Slots}x M.2 PCIe {item.m2PcieVersion}.0 + {item.sataPorts}x SATA
             </span>
             <span aria-hidden="true">·</span>
             <span>VRM máx: {item.maxRecommendedCpuWatts}W</span>

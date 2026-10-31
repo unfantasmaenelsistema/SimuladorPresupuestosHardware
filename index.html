@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'" />
+    <meta name="referrer" content="no-referrer" />
     <title>Simulador de Presupuestos y Compatibilidad de Hardware — Un Fantasma en el Sistema</title>
     <meta name="description" content="Simulador educativo de montaje y reparación de sistemas microinformáticos. Comprueba en tiempo real compatibilidad de socket, RAM DDR4/DDR5, TDP, dimensiones físicas y presupuestos por caso de uso." />
     <meta property="og:title" content="Simulador de Presupuestos y Compatibilidad de Hardware — SMR" />
     <meta property="og:description" content="Simulador educativo de montaje y reparación de sistemas microinformáticos por Un Fantasma en el Sistema." />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:url" content="https://unfantasmaenelsistema.github.io/SimuladorPresupuestosHardware/" />
+    <meta name="theme-color" content="#020617" />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/png" href="./assets/aistudio/icono_81a3db5b.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-500/20 selection:text-sky-600 dark:selection:text-sky-300">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

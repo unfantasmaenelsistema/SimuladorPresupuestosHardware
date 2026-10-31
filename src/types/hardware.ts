@@ -39,7 +39,8 @@ export interface MotherboardComponent {
   ramSlots: 2 | 4;
   maxRamGb: number;
   m2Slots: number;
-  maxPcieVersion: 3 | 4 | 5;
+  maxPcieVersion: 3 | 4 | 5; // ranura gráfica PCIe x16 principal
+  m2PcieVersion: 3 | 4 | 5; // ranura M.2 más rápida de la placa
   sataPorts: number;
   maxRecommendedCpuWatts: number; // VRM thermal capability
   lanSpeedGbps: 1 | 2.5 | 10;
@@ -56,6 +57,7 @@ export interface RamComponent {
   capacityPerModuleGb: number;
   totalCapacityGb: number;
   speedMhz: number;
+  jedecSpeedMhz: number; // velocidad sin perfil XMP/EXPO
   casLatency: number;
   isEcc: boolean;
   price: number;
